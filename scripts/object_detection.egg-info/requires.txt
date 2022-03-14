@@ -1,0 +1,11 @@
+Cython
+contextlib2
+lvis
+lxml
+matplotlib
+pandas
+pillow
+pycocotools
+scipy
+six
+tf-slim
