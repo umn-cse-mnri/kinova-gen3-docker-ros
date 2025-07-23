@@ -302,7 +302,7 @@ catkin_make
 ## Licensing and Credits
 - Source code is released under the BSD 3-Clause License (see LICENSE files)
 - Copyright (c) 2018 Kinova inc.
-- Maintainers: Kinova inc. support@kinovarobotics.com
+- Maintainer: Behnam Moradi behnammoradi026@gmail.com
 
 ## References
 - [Kinova Robotics](https://www.kinovarobotics.com/)
