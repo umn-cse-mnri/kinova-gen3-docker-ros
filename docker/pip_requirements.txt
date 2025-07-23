@@ -6,7 +6,7 @@ matplotlib
 mock
 numpy
 scipy
-sklearn
+scikit-learn
 pandas
 future
 portpicker

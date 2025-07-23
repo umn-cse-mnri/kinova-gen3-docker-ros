@@ -16,7 +16,7 @@ ARG ROS_HOSTNAME=localhost
 
 
 # Install apt packages
-COPY apt_packages.pkg /tmp/apt_packages.pkg
+COPY docker/apt_packages.pkg /tmp/apt_packages.pkg
 RUN apt-get update && \
     apt-get install -y \
         $(cat /tmp/apt_packages.pkg) \
@@ -25,7 +25,7 @@ RUN apt-get update && \
 RUN ln -s $(which python3) /usr/local/bin/python
 
 # Install PIP Packages
-ADD pip_requirements.txt /tmp/pip_requirements.txt
+ADD docker/pip_requirements.txt /tmp/pip_requirements.txt
 RUN python3 -m pip install --upgrade pip &&\
     python3 -m pip --no-cache-dir install -r /tmp/pip_requirements.txt
 
@@ -63,5 +63,5 @@ RUN rosdep init
 RUN rosdep update
 
 # RUN cd /opt/models
-RUN (cd /opt/ && git clone https://github.com/tensorflow/models.git && cd /opt/models/research && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py --force-reinstall && protoc object_detection/protos/*.proto --python_out=. && cp object_detection/packages/tf2/setup.py . && python3 -m pip install --use-feature=2020-resolver .)
+# RUN (cd /opt/ && git clone https://github.com/tensorflow/models.git && cd /opt/models/research && curl https://bootstrap.pypa.io/pip/3.8/get-pip.py -o get-pip.py && python3 get-pip.py --force-reinstall && protoc object_detection/protos/*.proto --python_out=. && cp object_detection/packages/tf2/setup.py . && python3 -m pip install --use-feature=2020-resolver .)
 

@@ -187,7 +187,7 @@ See [kortex_examples/readme.md](kinova_ws/src/ros_kortex/kortex_examples/readme.
 ## Licensing and Credits
 - Source code is released under the BSD 3-Clause License (see LICENSE files)
 - Copyright (c) 2018 Kinova inc.
-- Maintainers: Kinova inc. support@kinovarobotics.com
+- Maintainer: Behnam Moradi behnammoradi026@gmail.com
 
 ## References
 - [Kinova Robotics](https://www.kinovarobotics.com/)
