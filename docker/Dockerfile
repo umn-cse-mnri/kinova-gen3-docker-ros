@@ -1,6 +1,7 @@
 ARG UBUNTU_VERSION=20.04
 FROM ubuntu:${UBUNTU_VERSION}
 
+ENV CONAN_REVISIONS_ENABLED=1
 ENV DEBIAN_FRONTEND=noninteractive
 
 ENV CI_BUILD_PYTHON python
@@ -27,7 +28,7 @@ RUN ln -s $(which python3) /usr/local/bin/python
 # Install PIP Packages
 ADD docker/pip_requirements.txt /tmp/pip_requirements.txt
 RUN python3 -m pip install --upgrade pip &&\
-    python3 -m pip --no-cache-dir install -r /tmp/pip_requirements.txt
+    python3 -m pip --no-cache-dir install --break-system-packages --force-reinstall --ignore-installed -r /tmp/pip_requirements.txt
 
 RUN mkdir /bazel && \
     wget -O /bazel/installer.sh "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh" && \
@@ -57,6 +58,7 @@ RUN apt-get update && apt-get install -y \
     ros-noetic-tf2-sensor-msgs \
     python3-colcon-common-extensions \
     ros-noetic-vision-msgs \
+    ros-noetic-moveit-* \
     bash-completion
 
 RUN rosdep init

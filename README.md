@@ -19,7 +19,7 @@ A complete, containerized development and simulation environment for Kinova Gen3
   - [Vision Module](#vision-module)
   - [Running Examples](#running-examples)
 - [Customization and Extension](#customization-and-extension)
-- [Troubleshooting](#troubleshooting)
+- [Error Handling and Troubleshooting](#error-handling-and-troubleshooting)
 - [Licensing and Credits](#licensing-and-credits)
 - [References](#references)
 
@@ -99,6 +99,7 @@ See `docker/apt_packages.pkg` for a full list. Key packages include:
 ### Python (pip)
 See `docker/pip_requirements.txt`. Key packages include:
 - numpy, scipy, matplotlib, pandas, Pillow, h5py, keras_preprocessing, imutils
+- conan==1.59.0 (for Kortex API dependency management)
 
 ## Building the Workspace
 ### Using Docker (Recommended)
@@ -178,16 +179,130 @@ See [kortex_examples/readme.md](kinova_ws/src/ros_kortex/kortex_examples/readme.
 - **Simulation Plugins:** Add Gazebo plugins in `third_party/`
 - **Vision:** Extend vision nodes or calibration in `ros_kortex_vision/`
 
-## Troubleshooting
-- Ensure all dependencies are installed (see Dockerfile and requirements)
-- For real hardware, check network connectivity and correct IP address
-- For simulation, verify Gazebo and MoveIt! versions
-- See package-specific READMEs for detailed troubleshooting
+## Error Handling and Troubleshooting
+
+### Docker Build Issues
+
+#### 1. File Path Errors
+**Error:** `COPY apt_packages.pkg /tmp/apt_packages.pkg: not found`
+**Solution:** Ensure the Dockerfile uses correct relative paths:
+```dockerfile
+COPY docker/apt_packages.pkg /tmp/apt_packages.pkg
+ADD docker/pip_requirements.txt /tmp/pip_requirements.txt
+```
+
+#### 2. Package Installation Conflicts
+**Error:** `Cannot uninstall PyYAML 5.3.1` (distutils conflict)
+**Solution:** Use pip flags to handle system package conflicts:
+```dockerfile
+RUN python3 -m pip --no-cache-dir install --break-system-packages --force-reinstall --ignore-installed -r /tmp/pip_requirements.txt
+```
+
+#### 3. Invalid Package Names
+**Error:** `Unable to locate package libgstreamer-app1.0-dev`
+**Solution:** Use correct package names for Ubuntu 20.04:
+```dockerfile
+# Correct packages:
+gstreamer1.0-tools
+gstreamer1.0-libav
+libgstreamer1.0-dev
+libgstreamer-plugins-base1.0-dev
+libgstreamer-plugins-good1.0-dev
+gstreamer1.0-plugins-good
+gstreamer1.0-plugins-base
+```
+
+#### 4. Dockerfile Syntax Errors
+**Error:** `unknown instruction: bash-completion`
+**Solution:** Ensure proper line continuation in apt-get install:
+```dockerfile
+RUN apt-get update && apt-get install -y \
+    ros-noetic-desktop-full \
+    python3-rosdep \
+    # ... other packages ...
+    bash-completion
+```
+
+### ROS Workspace Build Issues
+
+#### 1. Missing GStreamer Dependencies
+**Error:** `CMake Error: A required package was not found` (pkg_check_modules)
+**Solution:** Install required GStreamer packages in `docker/apt_packages.pkg`:
+```bash
+# Add to apt_packages.pkg:
+gstreamer1.0-tools
+gstreamer1.0-libav
+libgstreamer1.0-dev
+libgstreamer-plugins-base1.0-dev
+libgstreamer-plugins-good1.0-dev
+gstreamer1.0-plugins-good
+gstreamer1.0-plugins-base
+```
+
+#### 2. Conan Package Manager Issues
+**Error:** `Conan executable not found!`
+**Solution:** Install Conan via pip in `docker/pip_requirements.txt`:
+```bash
+conan==1.59.0
+```
+
+**Error:** `ImportError: cannot import name 'ConanFile' from 'conans'`
+**Solution:** Use Conan 1.x (not 2.x) for compatibility with kortex_driver:
+```bash
+# Use conan==1.59.0 instead of conan (which installs 2.x)
+```
+
+**Error:** `The remote at 'kinova_public' only works with revisions enabled`
+**Solution:** Enable Conan revisions in Dockerfile:
+```dockerfile
+ENV CONAN_REVISIONS_ENABLED=1
+```
+
+#### 3. Python Version Compatibility
+**Error:** `This script does not work on Python 3.8`
+**Solution:** Use correct get-pip.py URL for Python 3.8:
+```dockerfile
+curl https://bootstrap.pypa.io/pip/3.8/get-pip.py -o get-pip.py
+```
+
+### Common Solutions
+
+#### Quick Fixes for Running Container
+If you encounter issues inside a running container:
+
+1. **Conan Profile Setup:**
+   ```bash
+   conan profile detect  # For Conan 2.x
+   # For Conan 1.x, profile is created automatically
+   ```
+
+2. **Enable Conan Revisions:**
+   ```bash
+   export CONAN_REVISIONS_ENABLED=1
+   ```
+
+3. **Install Missing Packages:**
+   ```bash
+   apt-get update && apt-get install -y <package-name>
+   ```
+
+#### Rebuilding from Scratch
+If you encounter persistent issues:
+```bash
+# Clean Docker build
+docker system prune -a
+make build-docker
+
+# Clean ROS workspace
+cd /root/kinova_ws
+rm -rf build devel
+catkin_make
+```
 
 ## Licensing and Credits
 - Source code is released under the BSD 3-Clause License (see LICENSE files)
 - Copyright (c) 2018 Kinova inc.
-- Maintainer: Behnam Moradi behnammoradi026@gmail.com
+- Maintainers: Kinova inc. support@kinovarobotics.com
 
 ## References
 - [Kinova Robotics](https://www.kinovarobotics.com/)

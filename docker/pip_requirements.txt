@@ -11,4 +11,5 @@ pandas
 future
 portpicker
 enum34
-imutils 
+imutils
+conan==1.59.0 
