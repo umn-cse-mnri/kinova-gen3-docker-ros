@@ -1,6 +1,6 @@
 # Kinova Gen3 Docker Workspace
 
-This is a repo for making a docker container useful for Kinova Gen3 and Gen3 Lite robotic arms, supporting ROS Noetic, MoveIt!, Gazebo, and vision modules. This repository is forked from github user Bmoradi93 and adapted for specific needs of robotics research at MnRI. The adaptations are currently being integrated into the repo. Follow this link to view a [quick reference of the changes and updates](https://docs.google.com/document/d/1PBQ2R5VCh3ZthbVX6kR8HIlWcJfp_iyCb_pucOXNKyM/edit?tab=t.0#heading=h.zfzuici332w8) that are being integrated. 
+This is a repo for making a docker container useful for Kinova Gen3 and Gen3 Lite robotic arms, supporting ROS Noetic, MoveIt!, Gazebo, and vision modules. This repository is forked from github user Bmoradi93 and adapted for specific needs of robotics research at MnRI. The adaptations are currently being integrated into the repo. Follow this link to view a [quick reference of the changes and updates](https://docs.google.com/document/d/1PBQ2R5VCh3ZthbVX6kR8HIlWcJfp_iyCb_pucOXNKyM/edit?usp=sharing) that are being integrated. 
 
 ---
 
